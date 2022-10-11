@@ -19,8 +19,8 @@ public class BacktrackingSudokuSolver {
         int x=0;
         int y=0;
         int z=0;
-        int count=-1;
-        int btBox=-1;
+        int count=-1; 		//farthest box
+        int btBox=-1;		//current box
         int maxAVcount=0;
         ArrayList<Integer> AV = new ArrayList<Integer>();
         ArrayList<Integer> AVcount = new ArrayList<Integer>(); 
@@ -45,7 +45,7 @@ public class BacktrackingSudokuSolver {
                 }
             }
     	}
-    //record open spaces 
+    //record empty spaces 
         for(int i=0; i<9; i++) {
             for(int j=0; j<9; j++) {
                 if(board[i][j]==0) {
@@ -76,7 +76,7 @@ public class BacktrackingSudokuSolver {
                 }          
             //determine available numbers    
                 AV=AVfinder(board, row, column);
-            //select number from the available numbers and then increase AVcount
+            //select number from the available numbers and then increase AVcount for the corresponding box
                 if(!AV.isEmpty()) {     
                      board[row][column]=AV.get(AVcount.get(btBox));
                      AVcount.set(btBox,AVcount.get(btBox)+1);
@@ -100,7 +100,7 @@ public class BacktrackingSudokuSolver {
                         if(AVcount.get(btBox)<maxAVcount) {
 							break; 
                         }else {
-                    //otherwise, keep backtracking
+                    //otherwise keep backtracking
                             AVcount.set(btBox,0);
                             btBox--;
                         }
