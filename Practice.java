@@ -1,174 +1,192 @@
 import java.util.Arrays;
 import java.util.ArrayList;
-public class Practice {
+public class BacktrackingSudokuSolver {
     public static void main(String[] args) {
-              //Setup
-                  int[][] board = {
-                          { 8, 0, 0, 0, 0, 0, 0, 0, 0 },    // 0 \\
-                          { 0, 0, 3, 6, 0, 0, 0, 0, 0 },    // 1 \\
-                          { 0, 7, 0, 0, 9, 0, 2, 0, 0 },    // 2 \\
-                          { 0, 5, 0, 0, 0, 7, 0, 0, 0 },    // 3 \\
-                          { 0, 0, 0, 0, 4, 5, 7, 0, 0 },    // 4 \\
-                          { 0, 0, 0, 1, 0, 0, 0, 3, 0 },    // 5 \\
-                          { 0, 0, 1, 0, 0, 0, 0, 6, 8 },    // 6 \\
-                          { 0, 0, 8, 5, 0, 0, 0, 1, 0 },    // 7 \\
-                          { 0, 9, 0, 0, 0, 0, 4, 0, 0 }};   // 8 \\
-                         // 0  1  2  3  4  5  6  7  8 \\
+    //setup
+    	int[][] board = {
+                { 0, 0, 0, 0, 0, 0, 0, 0, 0 },    // 0 \\
+                { 0, 0, 0, 0, 0, 3, 0, 8, 5 },    // 1 \\
+                { 0, 0, 1, 0, 2, 0, 0, 0, 0 },    // 2 \\
+                { 0, 0, 0, 5, 0, 7, 0, 0, 0 },    // 3 \\
+                { 0, 0, 4, 0, 0, 0, 1, 0, 0 },    // 4 \\
+                { 0, 9, 0, 0, 0, 0, 0, 0, 0 },    // 5 \\
+                { 5, 0, 0, 0, 0, 0, 0, 7, 3 },    // 6 \\
+                { 0, 0, 2, 0, 1, 0, 0, 0, 0 },    // 7 \\
+                { 0, 0, 0, 0, 4, 0, 0, 0, 9 }};   // 8 \\
+               // 0  1  2  3  4  5  6  7  8 \\
 
-                  int x=0;
-                  int y=0;
-                  int count=-1;
-                  int btBox=count;
-                  int maxAVcount=0;
-                  ArrayList<Integer> AV = new ArrayList<Integer>();
-                  ArrayList<Integer> AVcount = new ArrayList<Integer>(); 
-//                ArrayList<Integer> maxAVcount = new ArrayList<Integer>(); 
-                  ArrayList<Integer> unsCoords = new ArrayList<Integer>();  
-        
-        //record open spaces
-              ArrayList<Integer> openRC = new ArrayList<Integer>();
-              ArrayList<Integer> openCC = new ArrayList<Integer>();
-              ArrayList<String> spacer = new ArrayList<String>();
-                  for (int i=0; i<9; i++) {
-                      for (int j=0; j<9; j++) {
-                          if(board[i][j]==0) {
-                              openRC.add(i);
-                              openCC.add(j);
-                  }}}
-                  for (int i=0; i<openRC.size(); i++) {
-                      if(i%5==0) {
-                          spacer.add("/");
-                      }else {
-                          spacer.add(" ");
-                      }
-                  }
-                  for (int i=0; i<9; i++) {
-                    System.out.println(Arrays.toString(board[i]));
-                    for (int j=0; j<9; j++) {
-                    }
+        int tries=0;
+        int x=0;
+        int y=0;
+        int z=0;
+        int count=-1;
+        int btBox=-1;
+        int maxAVcount=0;
+        ArrayList<Integer> AV = new ArrayList<Integer>();
+        ArrayList<Integer> AVcount = new ArrayList<Integer>(); 
+        ArrayList<Integer> openRC = new ArrayList<Integer>();
+        ArrayList<Integer> openCC = new ArrayList<Integer>();
+    //fill boxes with only one available number
+        int k=0;
+        for(int i=0; i<9; i++) {
+            for(int j=0; j<9; j++) {
+                if(board[i][j]==0) {
+                	AV=AVfinder(board, i, j);
+                	if(AV.size()==1) {
+                		board[i][j]=AV.get(0);
+                		k=1;
+                		tries++;
+                	}
+                	if(k==1) {
+                		i=0;
+                		j=0;
+                		k=0;
+                	}
                 }
-                System.out.println();
-                System.out.println("                         "+spacer);
-                System.out.println("Open Row Coordinates:    "+openRC);
-                System.out.println("Open Column Coordinates: "+openCC+"\n");
-        //run until solved
-            while(x==0) {    
-            //iteration
-                for(int row=0; row<9; row++) {
-                for(int column=0; column<9; column++) {
-                //determine available numbers
-                    if(board[row][column]==0) {
-                        if(y==0) {
-                            count++;
-                            btBox=count;
-                            if(!unsCoords.contains(count)) {
-                                  AVcount.add(0);
-                            } 
-                        }
-                        
-                        AV=AVfinder(board, row, column);
-                        System.out.println("("+(row+1)+", "+(column+1)+")");
-                        System.out.println("Count: "+count);
-                        System.out.println("btBox: "+btBox);
-                        System.out.println("AV: "+AV);
-                        System.out.println("AVcount: "+AVcount);
-                    //select number from the available numbers
-                        if(!AV.isEmpty()) {
-                            
-                                     board[row][column]=AV.get(AVcount.get(btBox));
-                                    AVcount.set(btBox,AVcount.get(btBox)+1);
-                                    btBox++;
-                                    
-                        //unlock count
-                             if((y==1)&&(board[openRC.get(count)][openCC.get(count)]!=0)) {
-                                 unsCoords.clear();
-                                 y=0;
-                                 System.out.println("Count unlocked");
-                             }
-                        }else {
-                        //No available numbers
-                            System.out.println("No available numbers\n");                                                        
-                        //lock current count
-                            y=1;
-                        //backtrack
-                            btBox=btBox-1;
-                            System.out.println("Backtracked to "+btBox);
-                        //record current unsolved boxes
-                            if(!unsCoords.contains(btBox)) {
-                                unsCoords.add(btBox);
-                            }
-                        //reset boxes
-                            board[openRC.get(btBox)][openCC.get(btBox)]=0;
-                            
-                        //redetermine data    
-                            AV=AVfinder(board,openRC.get(btBox),openCC.get(btBox));
-                            maxAVcount=AV.size();
-                            
-                            while(AVcount.get(btBox)>=maxAVcount) {
-                                System.out.println("Hit Max AVcount");
-                                  
-                                for(int reset=btBox; reset<count; reset++) {
-                                    board[openRC.get(reset)][openCC.get(reset)]=0;
-                                }
-                                    
-                                    AV=AVfinder(board,openRC.get(btBox),openCC.get(btBox));
-                                    maxAVcount=AV.size();
-                                    
-                                    if(AVcount.get(btBox)<maxAVcount) {
-                                        break;
-                                    }else {
-                                        AVcount.set(btBox,0);
-                                        btBox=btBox-1;
-                                        System.out.println("Backtracked to "+btBox);
-                                    }
-                            }
-                            System.out.println("AVcount: "+AVcount.get(btBox));
-                            System.out.println("maxAVcount: "+maxAVcount);
-                            
-                        //reset coordinates
-                            row=openRC.get(btBox-1);
-                            column=openCC.get(btBox-1);
-                        }
-                        
-                        
-                        
-                        
-                        
-                        
-                    //printer
-                        x=1;
-                        for (int i=0; i<9; i++) {
-                            System.out.print(Arrays.toString(board[i])+"\n");
-                            for (int j=0; j<9; j++) {
-                                if(board[i][j]==0) {
-                                    x=0;
-                                }else {
-                                    //System.out.print("SOLVED");
-                                }
-                            }
-                        }
-                    }          
-                }                    
             }
-        }    
+    	}
+    //record open spaces 
+        for(int i=0; i<9; i++) {
+            for(int j=0; j<9; j++) {
+                if(board[i][j]==0) {
+                    openRC.add(i);
+                    openCC.add(j);
+                    AVcount.add(0);
+                }
+            }
+        }
+        for(int i=0; i<9; i++) System.out.println(Arrays.toString(board[i]));
+        if(AVcount.size()==0) {
+        	System.out.println("Solved in "+tries+" tries!");
+        	System.exit(1);
+        }
+    //iteration
+        for(int row=0; row<9; row++) {
+        for(int column=0; column<9; column++) {
+            if(board[row][column]==0) {
+                if(y==0) {
+                    count++;
+                } 
+                btBox++;
+                if(z==1) {
+                    btBox=0;
+                    row=openRC.get(btBox);
+                    column=openCC.get(btBox);
+                    z=0;
+                }          
+            //determine available numbers    
+                AV=AVfinder(board, row, column);
+            //select number from the available numbers and then increase AVcount
+                if(!AV.isEmpty()) {     
+                     board[row][column]=AV.get(AVcount.get(btBox));
+                     AVcount.set(btBox,AVcount.get(btBox)+1);
+                     tries++;
+                //unlock count
+                     if((y==1)&&(board[openRC.get(count)][openCC.get(count)]!=0)) {
+                         count=btBox;
+                         y=0;
+                     }
+                }else {     
+                //lock current position
+                    y=1;
+                //Backtracking algorithm    
+                    while(x==0) {  
+                    //reset box    
+                        board[openRC.get(btBox)][openCC.get(btBox)]=0;   
+                    //redetermine data      
+                        AV=AVfinder(board,openRC.get(btBox),openCC.get(btBox));
+                        maxAVcount=AV.size();
+                    //determine if current box's count is greater than its max count
+                        if(AVcount.get(btBox)<maxAVcount) {
+							break; 
+                        }else {
+                    //otherwise, keep backtracking
+                            AVcount.set(btBox,0);
+                            btBox--;
+                        }
+                    }
+                //reset coordinates
+                    btBox--; 
+                    if(btBox>=0) {
+                        row=openRC.get(btBox);
+                        column=openCC.get(btBox);
+                    }else {
+                        z=1;
+                    }                     
+                }
+            }          
+        }                    
     }
-    public static ArrayList<Integer> AVfinder(int[][] x, int row, int column) {
-            ArrayList<Integer> nums = new ArrayList<Integer>();
-            for(int i=1; i<=9; i++) nums.add(i);
-            ArrayList<Integer> AV = new ArrayList<Integer>();                   //    All Available numbers
-            ArrayList<Integer> UAV = new ArrayList<Integer>();                  //    All Unavailable numbers
-            int[] rowScan = x[row];
-            int[] columnScan = {x[0][column], x[1][column], x[2][column], x[3][column], x[4][column], x[5][column], x[6][column], x[7][column], x[8][column]};            
-            AV.clear(); AV.addAll(nums);
-            for(int i=0; i<9; i++) {        
-                  if(rowScan[i]!=0) {
-                      UAV.add(rowScan[i]);
-                  }
-                  if(columnScan[i]!=0) {
-                      UAV.add(columnScan[i]);
-                  }
-                  AV.removeAll(UAV); UAV.clear();
-              }
-            return AV;
+//printing
+	for(int i=0; i<9; i++) System.out.println(Arrays.toString(board[i]));
+	System.out.println("Solved in "+tries+" tries!");    
+}    
+public static ArrayList<Integer> AVfinder(int[][] x, int row, int column) {
+    ArrayList<Integer> AV = new ArrayList<Integer>();                   //    All Available numbers
+    ArrayList<Integer> UAV = new ArrayList<Integer>();                  //    All Unavailable numbers
+    for(int i=1; i<=9; i++) AV.add(i);
+    int[] rowScan = x[row];
+    int[] columnScan = {x[0][column], x[1][column], x[2][column], x[3][column], x[4][column], x[5][column], x[6][column], x[7][column], x[8][column]};            
+    for(int i=0; i<9; i++) {        
+        if(rowScan[i]!=0) {
+            UAV.add(rowScan[i]);
+        }
+        if(columnScan[i]!=0) {
+            UAV.add(columnScan[i]);
+        }
+    }
+    ArrayList<Integer> boxScanRows = new ArrayList<Integer>();
+    ArrayList<Integer> boxScanColumns = new ArrayList<Integer>();
+    int box=0;
+    if(row<=2) {
+        boxScanRows.addAll(Arrays.asList(1,2,3));
+    }else if(row<=5) {
+        boxScanRows.addAll(Arrays.asList(4,5,6));
+    }else {
+        boxScanRows.addAll(Arrays.asList(7,8,9));
+    }
+    if(column<=2) {
+        boxScanColumns.addAll(Arrays.asList(1,4,7));
+    }else if(column<=5) {
+        boxScanColumns.addAll(Arrays.asList(2,5,8));
+    }else {
+        boxScanColumns.addAll(Arrays.asList(3,6,9));
+    }
+    for(int i=0; i<3; i++) {
+        for(int j=0; j<3; j++) {
+            if(boxScanRows.get(i)==boxScanColumns.get(j)){
+                    box=boxScanRows.get(i);
+            }
+        }
+    }
+    if(box==1){
+        UAV.addAll(Arrays.asList(x[0][0], x[0][1], x[0][2], x[1][0], x[1][1], x[1][2], x[2][0], x[2][1], x[2][2]));
+    }
+    if(box==2){
+        UAV.addAll(Arrays.asList(x[0][3], x[0][4], x[0][5], x[1][3], x[1][4], x[1][5], x[2][3], x[2][4], x[2][5]));
+    }
+    if(box==3){
+        UAV.addAll(Arrays.asList(x[0][6], x[0][7], x[0][8], x[1][6], x[1][7], x[1][8], x[2][6], x[2][7], x[2][8]));
+    }
+    if(box==4){
+        UAV.addAll(Arrays.asList(x[3][0], x[3][1], x[3][2], x[4][0], x[4][1], x[4][2], x[5][0], x[5][1], x[5][2]));
+    }
+       if(box==5){
+        UAV.addAll(Arrays.asList(x[3][3], x[3][4], x[3][5], x[4][3], x[4][4], x[4][5], x[5][3], x[5][4], x[5][5]));
+    }
+    if(box==6){
+        UAV.addAll(Arrays.asList(x[3][6], x[3][7], x[3][8], x[4][6], x[4][7], x[4][8], x[5][6], x[5][7], x[5][8]));
+    }
+    if(box==7){
+        UAV.addAll(Arrays.asList(x[6][0], x[6][1], x[6][2], x[7][0], x[7][1], x[7][2], x[8][0], x[8][1], x[8][2]));
+    }
+    if(box==8){
+        UAV.addAll(Arrays.asList(x[6][3], x[6][4], x[6][5], x[7][3], x[7][4], x[7][5], x[8][3], x[8][4], x[8][5]));
+    }
+    if(box==9){
+        UAV.addAll(Arrays.asList(x[6][6], x[6][7], x[6][8], x[7][6], x[7][7], x[7][8], x[8][6], x[8][7], x[8][8]));
+    }
+    AV.removeAll(UAV);
+    return AV;
     }
 }
