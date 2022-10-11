@@ -2,7 +2,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 public class BacktrackingSudokuSolver {
     public static void main(String[] args) {
-    //setup
+    //setup with a puzzle designed to work against a brute force algorithm
     	int[][] board = {
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0 },    // 0 \\
                 { 0, 0, 0, 0, 0, 3, 0, 8, 5 },    // 1 \\
@@ -26,7 +26,8 @@ public class BacktrackingSudokuSolver {
         ArrayList<Integer> AVcount = new ArrayList<Integer>(); 
         ArrayList<Integer> openRC = new ArrayList<Integer>();
         ArrayList<Integer> openCC = new ArrayList<Integer>();
-    //fill boxes with only one available number
+        for(int i=0; i<9; i++) System.out.println(Arrays.toString(board[i]));
+      //fill boxes with only one available number
         int k=0;
         for(int i=0; i<9; i++) {
             for(int j=0; j<9; j++) {
@@ -45,7 +46,7 @@ public class BacktrackingSudokuSolver {
                 }
             }
     	}
-    //record empty spaces 
+    //record open spaces 
         for(int i=0; i<9; i++) {
             for(int j=0; j<9; j++) {
                 if(board[i][j]==0) {
@@ -55,10 +56,11 @@ public class BacktrackingSudokuSolver {
                 }
             }
         }
-        for(int i=0; i<9; i++) System.out.println(Arrays.toString(board[i]));
         if(AVcount.size()==0) {
         	System.out.println("Solved in "+tries+" tries!");
         	System.exit(1);
+        }else {
+        	System.out.println("\nSolving . . .\n");
         }
     //iteration
         for(int row=0; row<9; row++) {
@@ -74,9 +76,13 @@ public class BacktrackingSudokuSolver {
                     column=openCC.get(btBox);
                     z=0;
                 }          
+            //iPad small brained   
+                if(tries>=15000){
+                    //System.exit(1);
+                }
             //determine available numbers    
                 AV=AVfinder(board, row, column);
-            //select number from the available numbers and then increase AVcount for the corresponding box
+            //select number from the available numbers and then increase AVcount
                 if(!AV.isEmpty()) {     
                      board[row][column]=AV.get(AVcount.get(btBox));
                      AVcount.set(btBox,AVcount.get(btBox)+1);
