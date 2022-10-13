@@ -19,7 +19,6 @@ public class BacktrackingSudokuSolver {
         int btCount=0;
         int x=0;
         int y=0;
-        int z=0;
         int btBox=0;
         int maxAVcount=0;
         ArrayList<Integer> AV = new ArrayList<Integer>();
@@ -85,9 +84,9 @@ public class BacktrackingSudokuSolver {
         openCC.addAll(temp);
     //iteration
         for(btBox=0; btBox<AVcount.size(); btBox++) {
-            if(z==1) {
+            if(y==1) {
                 btBox=0;
-                z=0;
+                y=0;
             }          
         //iPad small brained   
             if(tries>=15000){
@@ -123,7 +122,7 @@ public class BacktrackingSudokuSolver {
                 btBox--; 
                 if(btBox>=0) {
                 }else {
-                    z=1;
+                    y=1;
                 }                     
             }               
         }
